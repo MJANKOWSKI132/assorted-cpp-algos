@@ -66,7 +66,7 @@ public:
         return v -> empty();
     }
 
-    T& top() {
+    T& top() const {
         return (*v)[0];
     }
 
@@ -111,14 +111,14 @@ int main() {
     std::cin >> maxOrMin;
     if (maxOrMin == "max") {
         const struct GreaterThan greaterThan;
-        std::unique_ptr<MaxHeap> maxHeap(new MaxHeap(greaterThan));
+        auto maxHeap = std::make_unique<MaxHeap>(greaterThan);
         for (int i = -20; i <= 20; ++i) 
             maxHeap -> insert(i);
         while (!maxHeap -> empty()) 
             std::cout << "current max: " << maxHeap -> extractTop() << '\n';
     } else if (maxOrMin == "min") {
         const struct LessThan lessThan;
-        std::unique_ptr<MinHeap> minHeap(new MinHeap(lessThan));
+        auto minHeap = std::make_unique<MinHeap>(lessThan);
         for (int i = 20; i >= -20; --i) 
             minHeap -> insert(i);
         while (!minHeap -> empty()) 
@@ -126,11 +126,11 @@ int main() {
     } else {
         std::cout << "Using default example\n";
         const struct GreaterThan greaterThan;
-        vector<int>* v = new vector<int>();
+        auto v = new vector<int>();
         for (int i = -20; i <= 20; ++i) {
             v -> push_back(i);
         }
-        std::unique_ptr<MaxHeap> maxHeap(new MaxHeap(v, greaterThan));
+        auto maxHeap = std::make_unique<MaxHeap>(v, greaterThan);
         while (!maxHeap -> empty()) 
             std::cout << "current max: " << maxHeap -> extractTop() << '\n';
     }
