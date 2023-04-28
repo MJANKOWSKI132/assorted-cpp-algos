@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <memory>
 #include "ListNode.h"
 
@@ -50,10 +49,10 @@ public:
         int idx = x % 10;
         auto* currNode = hashTable[idx];
         if (!currNode) {
-            hashTable[idx] = new ListNode(x);
+            hashTable[idx] = new ListNode<int>(x);
         } else {
             while (currNode -> next) currNode = currNode -> next;
-            currNode -> next = new ListNode(x);
+            currNode -> next = new ListNode<int>(x);
         }
     }
 
@@ -65,6 +64,7 @@ public:
         }
         if (!currNode || (currNode -> val != x)) {
             std::cout << "Could not find key: " << x << '\n';
+            return -1;
         }
         return currNode -> val;
     }
@@ -83,7 +83,7 @@ public:
             if (hashTable[idx]) {
                 ++i;
             } else {
-                hashTable[idx] = new ListNode(x);
+                hashTable[idx] = new ListNode<int>(x);
                 return;
             }
         }
@@ -93,7 +93,6 @@ public:
     }
 
     int get(int x) const override {
-        int res = -1;
         int i = 0;
         while (i < 10) {
             int idx = ((x % 10) + i) % 10;
