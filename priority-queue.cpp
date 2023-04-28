@@ -47,14 +47,9 @@ private:
         }
     }
 public:
-    explicit PriorityQueue(const Comparator& comp) {
-        this -> v = new vector<T>();
-        this -> comp = comp;
-    }
+    explicit PriorityQueue(const Comparator& comp): v(new vector<T>()), comp(comp) {}
 
-    PriorityQueue(vector<int>*& v, const Comparator& comp) {
-        this -> v = v;
-        this -> comp = comp;
+    PriorityQueue(vector<int>*& v, const Comparator& comp): v(v), comp(comp) {
         heapify();
     }
 
