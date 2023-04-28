@@ -2,23 +2,13 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include "ListNode.h"
 
 using std::vector;
 
-class ListNode {
-public:
-    int val;
-    ListNode* next;
-    explicit ListNode(int val): val(val), next(nullptr) {}
-
-    ~ListNode() {
-
-    }
-};
-
 class HashTable {
 protected:
-    ListNode* hashTable[10];
+    ListNode<int>* hashTable[10];
 
     void init(const std::initializer_list<int>& list) {
         for (const auto& x : list) put(x);
@@ -26,9 +16,9 @@ protected:
 public:
     virtual ~HashTable() {
         std::cout << "Now deleting HashTable\n";
-        for (ListNode*& head : hashTable) {
+        for (auto*& head : hashTable) {
             auto* currNode = head;
-            ListNode* nextNode = nullptr;
+            ListNode<int>* nextNode = nullptr;
             while (currNode) {
                 nextNode = currNode -> next;
                 delete currNode;
@@ -44,7 +34,7 @@ public:
     void display() const {
         for (int i = 0; i < 10; ++i) {
             std::cout << "index " << i << ": ";
-            ListNode* currNode = hashTable[i];
+            auto* currNode = hashTable[i];
             while (currNode) {
                 std::cout << currNode -> val << " -> ";
                 currNode = currNode -> next;
@@ -58,7 +48,7 @@ class HashTableChaining : public HashTable {
 public:
     void put(int x) override {
         int idx = x % 10;
-        ListNode* currNode = hashTable[idx];
+        auto* currNode = hashTable[idx];
         if (!currNode) {
             hashTable[idx] = new ListNode(x);
         } else {
@@ -69,7 +59,7 @@ public:
 
     int get(int x) const override {
         int idx = x % 10;
-        ListNode* currNode = hashTable[idx];
+        auto* currNode = hashTable[idx];
         while (currNode && currNode -> val != x) {
             currNode = currNode -> next;
         }
