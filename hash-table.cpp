@@ -64,7 +64,7 @@ public:
             currNode = currNode -> next;
         }
         if (!currNode || (currNode -> val != x)) {
-            throw std::out_of_range("Key not found: " + x);
+            std::cout << "Could not find key: " << x << '\n';
         }
         return currNode -> val;
     }
