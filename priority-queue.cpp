@@ -12,7 +12,7 @@ private:
 
     void heapify() {
         int largest, left, right;
-        for (int i = v -> size() / 2 - 1; i >= 0; ++i) {
+        for (int i = v -> size() / 2 - 1; i >= 0; --i) {
             while ((2 * i + 1) < v -> size()) {
                 largest = i;
                 left = 2 * i + 1;
@@ -52,7 +52,7 @@ public:
         this -> comp = comp;
     }
 
-    PriorityQueue(const vector<int>& v, const Comparator& comp) {
+    PriorityQueue(vector<int>*& v, const Comparator& comp) {
         this -> v = v;
         this -> comp = comp;
         heapify();
@@ -110,21 +110,29 @@ int main() {
     std::cout << "Enter 'max' or 'min': ";
     std::cin >> maxOrMin;
     if (maxOrMin == "max") {
-        const GreaterThan greaterThan;
+        const struct GreaterThan greaterThan;
         std::unique_ptr<MaxHeap> maxHeap(new MaxHeap(greaterThan));
         for (int i = -20; i <= 20; ++i) 
             maxHeap -> insert(i);
         while (!maxHeap -> empty()) 
             std::cout << "current max: " << maxHeap -> extractTop() << '\n';
     } else if (maxOrMin == "min") {
-        const LessThan lessThan;
+        const struct LessThan lessThan;
         std::unique_ptr<MinHeap> minHeap(new MinHeap(lessThan));
         for (int i = 20; i >= -20; --i) 
             minHeap -> insert(i);
         while (!minHeap -> empty()) 
             std::cout << "current min: " << minHeap -> extractTop() << '\n';
     } else {
-        std::cout << "Choice was not max or min\n";
+        std::cout << "Using default example\n";
+        const struct GreaterThan greaterThan;
+        vector<int>* v = new vector<int>();
+        for (int i = -20; i <= 20; ++i) {
+            v -> push_back(i);
+        }
+        std::unique_ptr<MaxHeap> maxHeap(new MaxHeap(v, greaterThan));
+        while (!maxHeap -> empty()) 
+            std::cout << "current max: " << maxHeap -> extractTop() << '\n';
     }
     return 0;
 }
