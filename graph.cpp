@@ -64,10 +64,10 @@ public:
     }
 
     void merge(const Edge& edge) {
-        auto u = edge.u;
-        auto v = edge.v;
-        int rootU = find(u);
-        int rootV = find(v);
+        const auto& u = edge.u;
+        const auto& v = edge.v;
+        const int& rootU = find(u);
+        const int& rootV = find(v);
         if (rootU == rootV) return;
         if (rank[rootU] < rank[rootV]) {
             parent[rootU] = rootV;
