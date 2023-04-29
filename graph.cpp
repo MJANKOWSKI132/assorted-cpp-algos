@@ -18,9 +18,65 @@ struct EdgeWeightComparator {
     }
 };
 
-struct DisplayEdge {
+struct Edge {
+    int u;
+    int v;
+    int weight;
+};
+
+struct EdgeComparator {
+    int operator() (const Edge& edge1, const Edge& edge2) {
+        return edge2.weight - edge1.weight;
+    }
+};
+
+struct DisplayEdgePair {
     std::string operator() (const pair<int, int>& p) {
         return "(" + std::to_string(p.first + 1) + ", " + std::to_string(p.second) + ")";
+    }
+};
+
+struct DisplayEdge {
+    std::string operator() (const Edge& edge) {
+        return "(u: " + std::to_string(edge.u + 1) + ", v: " + std::to_string(edge.v + 1) + ", weight: " + std::to_string(edge.weight) + ")";
+    }
+};
+
+class UnionFind {
+private:
+    vector<int> parent;
+    vector<int> rank;
+public:
+    UnionFind(const int& numVertices) {
+        parent.resize(numVertices);
+        rank.resize(numVertices);
+        for (int i = 0; i < numVertices; ++i) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+    }
+
+    int find(const int& x) const {
+        if (parent[x] != x) {
+            return find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    void merge(const Edge& edge) {
+        auto u = edge.u;
+        auto v = edge.v;
+        int rootU = find(u);
+        int rootV = find(v);
+        if (rootU == rootV) return;
+        if (rank[rootU] < rank[rootV]) {
+            parent[rootU] = rootV;
+        } else if (rank[rootU] > rank[rootV]) {
+            parent[rootV] = rootU;
+        } else {
+            parent[rootU] = rootV;
+            rank[rootU]++;
+        }
     }
 };
 
@@ -134,12 +190,40 @@ public:
         }
         return edges;
     }
+
+    vector<Edge> kruskal() const {
+        const EdgeComparator edgeComparator;
+        const DisplayEdge displayEdge;
+        auto minHeap = std::make_unique<PriorityQueue<Edge, EdgeComparator>>(edgeComparator);
+        vector<bool> visited(numVertices, false);
+        vector<int> parent(numVertices, -1);
+        for (int i = 0; i < numVertices; ++i) {
+            visited[i] = true;
+            for (const auto& vPair : *(*adj)[i]) {
+                auto v = vPair.first;
+                auto weight = vPair.second;
+                if (!visited[v]) {
+                    minHeap -> insert({i, v, weight});
+                }
+            }
+        }
+        vector<Edge> edges;
+        UnionFind unionFind(numVertices);
+        while (!minHeap -> empty() && edges.size() < numVertices - 1) {
+            auto edge = minHeap -> extractTop();
+            if (unionFind.find(edge.u) != unionFind.find(edge.v)) {
+                edges.push_back(edge);
+                unionFind.merge(edge);
+            }
+        }
+        return edges;
+    }
 };
 
 int main() {
     Graph g(false, 7);
     g.insertEdge(1, 6, 5);
-    g.insertEdge(1, 2, 4);
+    g.insertEdge(1, 2, 25);
     g.insertEdge(2, 7, 6);
     g.insertEdge(2, 3, 9);
     g.insertEdge(3, 4, 10);
@@ -148,11 +232,11 @@ int main() {
     g.insertEdge(5, 7, 16);
     g.insertEdge(5, 6, 18);
 
-    g.display();
+    // g.display();
 
-    auto edges = g.prim();
+    auto edges = g.kruskal();
     for (const auto& edge : edges) {
-        std::cout << "(" << edge.first + 1 << ", " << edge.second + 1 << ")\n";
+        std::cout << "(u: " << edge.u + 1 << ", v: " << edge.v + 1 << ", weight: " << edge.weight << ")\n";
     }
     return 0;
 }

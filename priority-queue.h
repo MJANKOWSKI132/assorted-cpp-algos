@@ -41,7 +41,7 @@ private:
         int i = v -> size() - 1;
         while (i > 0) {
             int parent = (i - 1) / 2;
-            if (comp((*v)[parent], (*v)[i]) > 0) 
+            if (comp((*v)[parent], (*v)[i]) > 0)
                 break;
             std::swap((*v)[parent], (*v)[i]);
             i = parent;
@@ -82,8 +82,6 @@ public:
     
     void insert(const T val) {
         v -> push_back(val);
-        int lastElemm = v -> size() - 1;
-        std::swap((*v)[0], (*v)[lastElemm]);
         siftUp();
     } 
 
