@@ -191,6 +191,31 @@ public:
         return edges;
     }
 
+    void djikstra(const int& start) const {
+        const auto& pairComparator = [](const pair<int, int>& pair1, const pair<int, int>& pair2) {
+            return pair1.first > pair2.first;
+        };
+        auto minHeap = std::make_unique<PriorityQueue<std::pair<int, int>, decltype(pairComparator)>>(pairComparator);
+        vector<int> dist(numVertices, INT_MAX);
+        dist[start - 1] = 0;
+        minHeap -> insert(std::make_pair(0, start - 1));
+        while (!minHeap -> empty()) {
+            const auto& top = minHeap -> extractTop();
+            const int& u = top.second;
+            for (const auto& adjacent : *(*adj)[u]) {
+                const int& v = adjacent.second;
+                const int& weight = adjacent.first;
+                if (dist[u] + weight < dist[v]) {
+                    dist[v] = dist[u] + weight;
+                    minHeap -> insert(std::make_pair(dist[v], v));
+                }
+            }
+        }
+        for (int i = 0; i < dist.size(); ++i) {
+            std::cout << "Distance from " << start << " to " << (i + 1) << " is: " << dist[i] << '\n';
+        }
+    }
+
     vector<Edge> kruskal() const {
         const EdgeComparator edgeComparator;
         const DisplayEdge displayEdge;
@@ -221,22 +246,26 @@ public:
 };
 
 int main() {
-    Graph g(false, 7);
-    g.insertEdge(1, 6, 5);
-    g.insertEdge(1, 2, 25);
-    g.insertEdge(2, 7, 6);
-    g.insertEdge(2, 3, 9);
-    g.insertEdge(3, 4, 10);
-    g.insertEdge(4, 5, 12);
-    g.insertEdge(4, 7, 11);
-    g.insertEdge(5, 7, 16);
-    g.insertEdge(5, 6, 18);
+    Graph g(true, 3);
+    // g.insertEdge(1, 6, 5);
+    // g.insertEdge(1, 2, 25);
+    // g.insertEdge(2, 7, 6);
+    // g.insertEdge(2, 3, 9);
+    // g.insertEdge(3, 4, 10);
+    // g.insertEdge(4, 5, 12);
+    // g.insertEdge(4, 7, 11);
+    // g.insertEdge(5, 7, 16);
+    // g.insertEdge(5, 6, 18);
+    g.insertEdge(1, 2, 1);
+    g.insertEdge(1, 3, 2);
+    g.insertEdge(2, 3, 2);
 
-    // g.display();
+    g.djikstra(1);
+    g.display();
 
-    auto edges = g.kruskal();
-    for (const auto& edge : edges) {
-        std::cout << "(u: " << edge.u + 1 << ", v: " << edge.v + 1 << ", weight: " << edge.weight << ")\n";
-    }
+    // auto edges = g.kruskal();
+    // for (const auto& edge : edges) {
+    //     std::cout << "(u: " << edge.u + 1 << ", v: " << edge.v + 1 << ", weight: " << edge.weight << ")\n";
+    // }
     return 0;
 }
